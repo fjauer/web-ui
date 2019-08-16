@@ -37,7 +37,7 @@ const stateFalse = false;
 const dayInMs = 86400000;
 const failureTimeInMs = dayInMs * 7;
 const today = new Date();
-const customColor = '#4484ce'; // /* cc */
+const customColor = '#c1022c'; // /* cc */
 
 @Injectable({
     providedIn: 'root'
