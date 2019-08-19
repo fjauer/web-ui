@@ -28,7 +28,7 @@ import {ChartsProcessDeploymentsEditDialogComponent} from '../dialogs/charts-pro
 import {ChartDataTableModel} from '../../../../../core/components/chart/chart-data-table.model';
 import {ChartsDataTableModel} from '../../../shared/charts-data-table.model';
 
-const customColor = '#4484ce'; // /* cc */
+const customColor = '#c1022c'; // /* cc */
 
 @Injectable({
     providedIn: 'root'

@@ -32,7 +32,7 @@ import {WidgetModel} from '../../../../modules/dashboard/shared/dashboard-widget
 import {DashboardManipulationEnum} from '../../../../modules/dashboard/shared/dashboard-manipulation.enum';
 import {ExportValueModel} from '../../../../modules/data/export/shared/export.model';
 
-const customColor = '#4484ce'; // /* cc */
+const customColor = '#c1022c'; // /* cc */
 
 @Injectable({
     providedIn: 'root'

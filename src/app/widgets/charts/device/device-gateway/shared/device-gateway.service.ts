@@ -31,7 +31,7 @@ import {NetworksService} from '../../../../../modules/devices/networks/shared/ne
 import {NetworksHistoryModel} from '../../../../../modules/devices/networks/shared/networks-history.model';
 import {ChartsDataTableModel} from '../../../shared/charts-data-table.model';
 
-const customColor = '#4484ce'; // /* cc */
+const customColor = '#c1022c'; // /* cc */
 
 @Injectable({
     providedIn: 'root'
