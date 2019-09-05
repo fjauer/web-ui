@@ -38,6 +38,8 @@ export class DeployFlowComponent {
     ready = false;
     inputs: ParseModel[] = [];
     id = '' as string;
+    name = '';
+    description = '';
 
     deviceTypes = [] as any;
     paths = [] as any;
@@ -65,13 +67,14 @@ export class DeployFlowComponent {
         }
         this.loadDevices();
 
-        this.pipeReq = {id: this.id, nodes: [], windowTime: this.windowTime};
+        this.pipeReq = {id: this.id, name: '', description: '', nodes: [], windowTime: this.windowTime};
 
         this.parserService.getInputs(this.id).subscribe((resp: ParseModel []) => {
             this.inputs = resp;
             this.ready = true;
             this.inputs.map((value: ParseModel, key) => {
-                this.pipeReq.nodes[key] = {nodeId: value.id, inputs: undefined, config: undefined} as NodeModel;
+                this.pipeReq.nodes[key] = {nodeId: value.id, inputs: undefined,
+                    config: undefined, deploymentType: value.deploymentType} as NodeModel;
                 // create map for inputs
                 if (value.inPorts !== undefined) {
                     value.inPorts.map((port: string) => {
@@ -125,11 +128,20 @@ export class DeployFlowComponent {
                         const x = {name: entry [0], path: entry[1].path} as NodeValue;
                         const y = [] as NodeValue [];
                         y.push(x);
-                        const z = {
+                        let z = {} as NodeInput;
+                        if (node.deploymentType === 'local') {
+                            z = {
+                                deviceId: entry[1].device.id,
+                                topicName: 'event/' + entry[1].device.uri + '/' + entry[1].service.url,
+                                values: y
+                            } as NodeInput;
+                        } else {
+                            z = {
                             deviceId: entry[1].device.id,
                             topicName: entry[1].service.id.replace(/#/g, '_'),
                             values: y
-                        } as NodeInput;
+                            } as NodeInput;
+                        }
                         if (node.inputs === undefined) {
                             node.inputs = [];
                         }
@@ -160,6 +172,8 @@ export class DeployFlowComponent {
         });
 
         this.pipeReq.windowTime = this.windowTime;
+        this.pipeReq.name = this.name;
+        this.pipeReq.description = this.description;
         this.flowEngineService.startPipeline(this.pipeReq).subscribe(function () {
             self.router.navigate(['/data/pipelines']);
             self.snackBar.open('Pipeline started', undefined, {
@@ -186,16 +200,29 @@ export class DeployFlowComponent {
     }
 
     serviceChanged(service: DeviceTypeServiceModel, inputId: string, port: string) {
+        const input = this.inputs.find(x => x.id === inputId);
         this.vals = [];
         let pathString = 'value';
-        service.output.forEach((out: DeviceTypeAssignmentModel) => {
-            if (out.type.fields != null) {
-                pathString += '.' + out.name;
-                out.type.fields.forEach((field: ValueTypesFieldTypeModel) => {
-                    this.traverseDataStructure(pathString, field);
-                });
-            }
-        });
+        if (input !== undefined && input.deploymentType === 'local') {
+            pathString = '';
+            service.output.forEach((out: DeviceTypeAssignmentModel) => {
+                if (out.type.fields != null) {
+                    pathString += out.msg_segment.name;
+                    out.type.fields.forEach((field: ValueTypesFieldTypeModel) => {
+                        this.traverseDataStructure(pathString, field);
+                    });
+                }
+            });
+        } else {
+            service.output.forEach((out: DeviceTypeAssignmentModel) => {
+                if (out.type.fields != null) {
+                    pathString += '.' + out.name;
+                    out.type.fields.forEach((field: ValueTypesFieldTypeModel) => {
+                        this.traverseDataStructure(pathString, field);
+                    });
+                }
+            });
+        }
         this.paths[inputId][port] = this.vals;
     }
 

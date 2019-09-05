@@ -16,12 +16,15 @@
 
 export interface PipelineRequestModel {
     id: string;
+    name: string;
+    description: string;
     windowTime: number;
     nodes: NodeModel [];
 }
 
 export interface NodeModel {
     nodeId: string;
+    deploymentType: string;
     config: NodeConfig [] | undefined;
     inputs: NodeInput [] | undefined;
 }

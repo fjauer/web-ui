@@ -27,7 +27,10 @@ export interface ExportModel {
     TimePath: string | undefined;
     RancherServiceId: string;
     ServiceName: string;
+    Offset: string;
     Values: ExportValueModel [];
+    CreatedAt: string;
+    UpdatedAt: string;
 }
 
 export interface ExportValueModel {
