@@ -1,0 +1,54 @@
+<!--
+  ~ Copyright 2018 InfAI (CC SES)
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<mat-card>
+    <senergy-widget-header [widget]="widget"></senergy-widget-header>
+    <mat-card-content class="content-size drag-handler">
+        <div *ngIf="!configured" fxFill fxLayout="column" fxLayoutAlign="center center">
+            <div>Widget not correctly configured!</div>
+            <div>Check if exports and columns are set.</div>
+        </div>
+        <senergy-widget-spinner [show]="configured && !isDataReady"></senergy-widget-spinner>
+        <div *ngIf="configured && isDataReady()" style="height: 100%" fxLayout="column"  fxFill>
+            <mat-list style="overflow: auto; max-height: 100%">
+                <mat-list-item *ngFor="let m of orderedValues()">
+                    {{m.name}}:&nbsp;
+                    <span *ngIf="m.type === 'String'">
+                        {{m.data}} {{m.unit}}
+                    </span>
+                    <span *ngIf="m.type !== 'String'"
+                          [ngClass]="m.warning_enabled && (m.data < m.lowerBoundary || m.data > m. upperBoundary) && 'color-warn'">
+                        <span *ngIf="m.type === 'Number'">
+                            {{m.data | number: m.format}}
+                        </span>
+                        <span *ngIf="m.type === 'Date'">
+                            {{m.data | date: m.format}}
+                        </span>
+                        <span *ngIf="m.type === 'Currency'">
+                                {{m.data | currency: m.format}}
+                        </span>
+                        <span *ngIf="m.type === 'Percent'">
+                            {{m.data | percent: m.format}}
+                        </span>
+                        {{m.unit}}
+                    </span>
+                </mat-list-item>
+            </mat-list>
+        </div>
+    </mat-card-content>
+    <senergy-widget-footer [dashboardId]="dashboardId" [widget]="widget" (editEvent)="edit()"></senergy-widget-footer>
+</mat-card>
+

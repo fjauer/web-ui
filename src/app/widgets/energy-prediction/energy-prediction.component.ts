@@ -30,12 +30,13 @@ import {Subscription} from 'rxjs';
 })
 export class EnergyPredictionComponent implements OnInit, OnDestroy {
 
-    predictionModel: EnergyPredictionModel = {prediction: 0, timestamp: ''};
+    predictionModel: EnergyPredictionModel = {prediction: 0, predictionTotal: 0, timestamp: ''};
     ready = false;
+    configured = false;
+    dataReady = false;
     destroy = new Subscription();
     thresholdActive = false;
     price = 0;
-    timestamp = '';
 
     @Input() dashboardId = '';
     @Input() widget: WidgetModel = {id: '', type: '', name: '', properties: {}};
@@ -50,6 +51,7 @@ export class EnergyPredictionComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.update();
         this.registerIcons();
+        this.setConfigured();
     }
 
     ngOnDestroy() {
@@ -57,8 +59,7 @@ export class EnergyPredictionComponent implements OnInit, OnDestroy {
     }
 
     registerIcons() {
-        this.iconRegistry.addSvgIcon('online', this.sanitizer.bypassSecurityTrustResourceUrl('src/img/connect_white.svg'));
-        this.iconRegistry.addSvgIcon('offline', this.sanitizer.bypassSecurityTrustResourceUrl('src/img/disconnect_white.svg'));
+
     }
 
     edit() {
@@ -66,23 +67,38 @@ export class EnergyPredictionComponent implements OnInit, OnDestroy {
     }
 
     private update() {
+        this.setConfigured();
         this.destroy = this.dashboardService.initWidgetObservable.subscribe((event: string) => {
             if (event === 'reloadAll' || event === this.widget.id) {
                 this.ready = false;
-                this.predictionService.getPrediction(this.widget).subscribe((devicesStatus: EnergyPredictionModel) => {
+                this.dataReady = false;
+                const prediction = this.predictionService.getPrediction(this.widget);
+                prediction.subscribe((devicesStatus: EnergyPredictionModel) => {
                     this.predictionModel = devicesStatus;
                     this.price = this.predictionModel.prediction * (this.widget.properties.price || 0);
                     switch (this.widget.properties.thresholdOption) {
                         case 'Consumption':
-                            this.thresholdActive = this.predictionModel.prediction > (this.widget.properties.threshold || Infinity);
+                            this.thresholdActive = this.predictionModel.prediction > (this.widget.properties.threshold || -Infinity);
                             break;
                         case 'Price':
-                            this.thresholdActive = this.price > (this.widget.properties.threshold || Infinity);
+                            this.thresholdActive = this.price > (this.widget.properties.threshold || -Infinity);
                             break;
                     }
+                    this.dataReady = true;
+                    this.ready = true;
+                }, () => {
                     this.ready = true;
                 });
             }
         });
+    }
+
+    private setConfigured() {
+        this.configured = !(
+            this.widget.properties === undefined
+            || this.widget.properties.thresholdOption === ''
+            || this.widget.properties.selectedOption === ''
+            || this.widget.properties.measurement === undefined
+        );
     }
 }

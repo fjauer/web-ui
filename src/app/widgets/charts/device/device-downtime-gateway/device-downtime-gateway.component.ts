@@ -44,7 +44,7 @@ export class DeviceDowntimeGatewayComponent implements OnInit, OnDestroy {
     @HostListener('window:resize')
     onResize() {
         if (this.resizeTimeout === 0) {
-            this.resizeTimeout = setTimeout(() => {
+            this.resizeTimeout = window.setTimeout(() => {
                 this.resizeProcessInstancesStatusChart();
                 this.resizeTimeout = 0;
             }, 300);
@@ -91,7 +91,9 @@ export class DeviceDowntimeGatewayComponent implements OnInit, OnDestroy {
                 this.deviceDowntimeGateway.options.chartArea.height = element.heightPercentage;
                 this.deviceDowntimeGateway.options.chartArea.width = element.widthPercentage;
             }
-            this.deviceDowntimeGatewayChart.redraw();
+            if (this.deviceDowntimeGateway.dataTable[0].length > 0 ) {
+                this.deviceDowntimeGatewayChart.redraw();
+            }
         }
     }
 }

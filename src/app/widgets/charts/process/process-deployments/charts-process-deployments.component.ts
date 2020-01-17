@@ -44,7 +44,7 @@ export class ChartsProcessDeploymentsComponent implements OnInit, OnDestroy {
     @HostListener('window:resize')
     onResize() {
         if (this.resizeTimeout === 0) {
-            this.resizeTimeout = setTimeout(() => {
+            this.resizeTimeout = window.setTimeout(() => {
                 this.resizeProcessInstancesStatusChart();
                 this.resizeTimeout = 0;
             }, 300);
@@ -91,7 +91,9 @@ export class ChartsProcessDeploymentsComponent implements OnInit, OnDestroy {
                 this.processDeploymentsHistory.options.chartArea.height = element.heightPercentage;
                 this.processDeploymentsHistory.options.chartArea.width = element.widthPercentage;
             }
-            this.processDeploymentsHistoryChart.redraw();
+            if (this.processDeploymentsHistory.dataTable[0].length > 0 ) {
+                this.processDeploymentsHistoryChart.redraw();
+            }
         }
     }
 }

@@ -24,6 +24,8 @@ export enum DashboardTypesEnum {
     ProcessModelList = 'process_model_list',
     DeviceDowntimeList = 'device_downtime_list',
     SingleValue = 'single_value',
+    MultiValue = 'multi_value',
     EnergyPrediction = 'energy_prediction',
     AirQuality = 'air_quality',
+    ProcessIncidentList = 'process_incident_list',
 }

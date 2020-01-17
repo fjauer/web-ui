@@ -15,7 +15,7 @@
  */
 
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpClient, HttpHeaders, HttpResponseBase} from '@angular/common/http';
 import {environment} from '../../../../../environments/environment';
 import {Observable} from 'rxjs';
 import {catchError, map} from 'rxjs/internal/operators';
@@ -23,6 +23,8 @@ import {ErrorHandlerService} from '../../../../core/services/error-handler.servi
 import {DeploymentsModel} from './deployments.model';
 import {DeploymentsDefinitionModel} from './deployments-definition.model';
 import {DeploymentsMissingDependenciesModel} from './deployments-missing-dependencies.model';
+import {DesignerProcessModel} from '../../designer/shared/designer.model';
+import {DeploymentsPreparedModel} from './deployments-prepared.model';
 
 @Injectable({
     providedIn: 'root'
@@ -47,7 +49,7 @@ export class DeploymentsService {
     }
 
     getMissingDependencies(id: string): Observable<DeploymentsMissingDependenciesModel | null> {
-        return this.http.get<DeploymentsMissingDependenciesModel>(environment.processDeploymentUrl + '/deployment/' + encodeURIComponent(id) + '/dependencies').pipe(
+        return this.http.get<DeploymentsMissingDependenciesModel>(environment.processDeploymentUrl + '/dependencies/' + encodeURIComponent(id)).pipe(
             catchError(this.errorHandlerService.handleError(DeploymentsService.name, 'getMissingDependencies', null))
         );
     }
@@ -58,9 +60,27 @@ export class DeploymentsService {
         );
     }
 
-    deleteDeployment(deploymentId: string): Observable<string> {
-        return this.http.delete(environment.processDeploymentUrl + '/deployment/' + encodeURIComponent(deploymentId), {responseType: 'text'}).pipe(
-            catchError(this.errorHandlerService.handleError(DeploymentsService.name, 'deleteDeployment', 'error'))
+    deleteDeployment(deploymentId: string): Observable<{status: number}> {
+        return this.http.delete(environment.processDeploymentUrl + '/deployments/' + encodeURIComponent(deploymentId), {responseType: 'text', observe: 'response'}).pipe(
+            map( resp => {
+                return {status: resp.status};
+            }),
+            catchError(this.errorHandlerService.handleError(DeploymentsService.name, 'deleteDeployment', {status: 500}))
+        );
+    }
+
+    getPreparedDeployments(processId: string): Observable<DeploymentsPreparedModel | null> {
+        return this.http.get<DeploymentsPreparedModel>(environment.processDeploymentUrl + '/prepared-deployments/' + processId).pipe(
+            catchError(this.errorHandlerService.handleError(DeploymentsService.name, 'getPreparedDeployments', null))
+        );
+    }
+
+    postDeployments(deployment: DeploymentsPreparedModel): Observable<{status: number}> {
+        return this.http.post<DeploymentsPreparedModel>(environment.processDeploymentUrl + '/deployments', deployment, {observe: 'response'}).pipe(
+            map(resp => {
+                return {status: resp.status};
+            }),
+            catchError(this.errorHandlerService.handleError(DeploymentsService.name, 'postDeployments', {status: 500}))
         );
     }
 

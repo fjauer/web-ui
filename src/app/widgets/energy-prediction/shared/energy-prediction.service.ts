@@ -60,16 +60,22 @@ export class EnergyPredictionService {
         return new Observable<EnergyPredictionModel>((observer) => {
             this.getData(widget.properties.measurement ? widget.properties.measurement.id : '').
             subscribe((resp: ChartsExportModel) => {
-                observer.next(
-                    this.extractData(resp, widget)
-                );
+                const energyPredictionModel = this.extractData(resp, widget);
+                if (energyPredictionModel.timestamp !== undefined
+                    && energyPredictionModel.timestamp !== null
+                    && energyPredictionModel.timestamp !== ''
+                    && energyPredictionModel.timestamp !== 'None') {
+                    observer.next(energyPredictionModel);
+                } else {
+                    observer.error();
+                }
                 observer.complete();
             });
         });
     }
 
     private extractData(data: ChartsExportModel, widget: WidgetModel): EnergyPredictionModel {
-        const model: EnergyPredictionModel = {prediction: 0, timestamp: ''};
+        const model: EnergyPredictionModel = {prediction: 0, predictionTotal: 0, timestamp: ''};
         if (data === undefined || data.results === undefined || data.results.length === 0
             || data.results[0].series === undefined || data.results[0].series.length === 0) {
             console.log('Got empty results for EnergyPrediction');
@@ -82,6 +88,14 @@ export class EnergyPredictionService {
             model.prediction = series.values[0][predictionIndex] as number;
         } catch (e) {
             console.error('Could not extract Prediction value: ' + e);
+        }
+
+        try {
+            const valueName = (widget.properties.columns ? widget.properties.columns.predictionTotal : '');
+            const predictionIndex = series.columns.indexOf(valueName);
+            model.predictionTotal = series.values[0][predictionIndex] as number;
+        } catch (e) {
+            console.error('Could not extract total prediction value: ' + e);
         }
 
         try {

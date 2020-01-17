@@ -36,15 +36,12 @@ import {
 import {
     DeviceTypeSelectionRefModel,
     DeviceTypeSelectionResultModel
-} from '../../devices/device-types/shared/device-type-selection.model';
-import {DeviceTypeDialogService} from '../../devices/device-types/shared/device-type-dialog.service';
+} from '../../devices/device-types-overview/shared/device-type-selection.model';
 import {DesignerDialogService} from './shared/designer-dialog.service';
 import {DesignerService} from './shared/designer.service';
 import {ProcessRepoService} from '../process-repo/shared/process-repo.service';
 import {ActivatedRoute} from '@angular/router';
-import {UtilService} from '../../../core/services/util.service';
 import {MatSnackBar} from '@angular/material';
-import {last} from 'rxjs/operators';
 
 @Component({
     selector: 'senergy-process-designer',
@@ -55,15 +52,12 @@ import {last} from 'rxjs/operators';
 export class ProcessDesignerComponent implements OnInit {
 
     modeler: any;
-    processModel: DesignerProcessModel[] = [];
     id = '';
 
     constructor(
         private http: HttpClient,
         private route: ActivatedRoute,
-        protected utilService: UtilService,
         protected auth: AuthorizationService,
-        protected dtDialogService: DeviceTypeDialogService,
         protected designerDialogService: DesignerDialogService,
         protected designerService: DesignerService,
         protected processRepoService: ProcessRepoService,
@@ -157,10 +151,13 @@ export class ProcessDesignerComponent implements OnInit {
                 devicetypeService: DeviceTypeSelectionRefModel,
                 callback: (connectorInfo: DeviceTypeSelectionResultModel) => void
             ) => {
-                that.dtDialogService.openSelectDeviceTypeAndServiceDialog(devicetypeService, callback);
+                that.designerDialogService.openTaskConfigDialog(devicetypeService, callback);
             },
             configEmail: (to: string, subj: string, content: string, callback: (to: string, subj: string, content: string) => void) => {
                 that.designerDialogService.openEmailConfigDialog(to, subj, content, callback);
+            },
+            configNotification: (subj: string, content: string, callback: (subj: string, content: string) => void) => {
+                that.designerDialogService.openNotificationConfigDialog(subj, content, callback);
             }
         };
 
@@ -173,11 +170,9 @@ export class ProcessDesignerComponent implements OnInit {
     }
 
     loadProcessDiagram(id: string) {
-        this.processRepoService.getProcessModel(id).subscribe((resp: DesignerProcessModel[] | null) => {
+        this.processRepoService.getProcessModel(id).subscribe((resp: DesignerProcessModel | null) => {
             if (resp !== null) {
-                this.processModel = resp;
-                const xml = this.utilService.convertJSONtoXML(this.processModel[0].process);
-
+                const xml = resp.bpmn_xml;
                 this.modeler.importXML(xml, this.handleError);
             }
         });
@@ -221,7 +216,7 @@ export class ProcessDesignerComponent implements OnInit {
                             this.snackBar.open('Error SVG! ' + errSVG, undefined, {duration: 3500});
                         } else {
                             this.processRepoService.saveProcess(
-                                this.id, this.utilService.convertXMLtoJSON(processXML), svgXML).subscribe(() => {
+                                this.id, processXML, svgXML).subscribe(() => {
                                 this.snackBar.open('Model saved.', undefined, {duration: 2000});
                             });
                         }

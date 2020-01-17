@@ -51,7 +51,7 @@ export class ChartsExportComponent implements OnInit, OnDestroy {
     @HostListener('window:resize')
     onResize() {
         if (this.resizeTimeout === 0) {
-            this.resizeTimeout = setTimeout(() => {
+            this.resizeTimeout = window.setTimeout(() => {
                 this.resizeProcessInstancesStatusChart();
                 this.resizeTimeout = 0;
             }, 500);
@@ -123,7 +123,9 @@ export class ChartsExportComponent implements OnInit, OnDestroy {
                 this.chartExportData.options.chartArea.height = element.heightPercentage;
                 this.chartExportData.options.chartArea.width = element.widthPercentage;
             }
-            this.chartExport.redraw();
+            if (this.chartExportData.dataTable[0].length > 0 ) {
+                this.chartExport.redraw();
+            }
         }
     }
 }

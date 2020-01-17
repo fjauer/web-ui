@@ -19,6 +19,9 @@ import {ChartsExportPropertiesModel} from '../../../widgets/charts/export/shared
 import {DeviceDowntimeGatewayPropertiesModel} from '../../../widgets/charts/device/device-downtime-gateway/shared/device-downtime-gateway-properties.model';
 import {EnergyPredictionPropertiesModel} from '../../../widgets/energy-prediction/shared/energy-prediction.model';
 import {AirQualityPropertiesModel} from '../../../widgets/air-quality/shared/air-quality.model';
+import {SingleValuePropertiesModel} from '../../../widgets/single-value/shared/single-value.model';
+import {MultiValuePropertiesModel} from '../../../widgets/multi-value/shared/multi-value.model';
+import {ProcessIncidentPropertiesModel} from '../../../widgets/process-incident-list/shared/process-incident-properties.model';
 
 export interface WidgetModel {
     id: string;
@@ -29,5 +32,6 @@ export interface WidgetModel {
     y?: number;
 }
 
-interface WidgetPropertiesModels extends SwitchPropertiesModel, ChartsExportPropertiesModel, DeviceDowntimeGatewayPropertiesModel, EnergyPredictionPropertiesModel, AirQualityPropertiesModel {
+interface WidgetPropertiesModels extends SwitchPropertiesModel, ChartsExportPropertiesModel, DeviceDowntimeGatewayPropertiesModel,
+    EnergyPredictionPropertiesModel, AirQualityPropertiesModel, SingleValuePropertiesModel, MultiValuePropertiesModel, ProcessIncidentPropertiesModel {
 }

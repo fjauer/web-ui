@@ -56,8 +56,10 @@ export class DashboardNewWidgetDialogComponent {
         {value: DashboardTypesEnum.ProcessModelList, viewValue: 'Process model list'},
         {value: DashboardTypesEnum.DeviceDowntimeList, viewValue: 'Device downtime list'},
         {value: DashboardTypesEnum.SingleValue, viewValue: 'Single Value'},
+        {value: DashboardTypesEnum.MultiValue, viewValue: 'Multi Value'},
         {value: DashboardTypesEnum.EnergyPrediction, viewValue: 'Energy Prediction'},
         {value: DashboardTypesEnum.AirQuality, viewValue: 'Air Quality'},
+        {value: DashboardTypesEnum.ProcessIncidentList, viewValue: 'Process incident list'},
     ];
     switchCategories: SwitchCategories[] = [
         {
@@ -123,7 +125,11 @@ export class DashboardNewWidgetDialogComponent {
             }
             case DashboardTypesEnum.Chart: {
                 widget.type = this.selectedCategory.value;
-
+                break;
+            }
+            case DashboardTypesEnum.ProcessIncidentList: {
+                widget.properties.limit = 10;
+                break;
             }
         }
         this.dialogRef.close(widget);

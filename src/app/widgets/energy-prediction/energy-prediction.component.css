@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-mat-card {
+.mat-card {
     width: 100%;
     height: 100%;
     box-sizing: border-box;
@@ -40,10 +40,6 @@ mat-card {
     margin-left: 4px;
 }
 
-.red {
-    color: red;
-}
-
 .content-size {
     min-height: calc(100% - 72px);
     height: calc(100% - 72px);
@@ -52,4 +48,15 @@ mat-card {
 
 .white {
     color: white;
+}
+.center-text {
+    text-align: center;
+}
+
+.values {
+    font: 500 18px/22px Roboto,"Helvetica Neue",sans-serif;
+}
+
+.widget-icon {
+    margin-top: 12px;
 }

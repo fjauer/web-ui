@@ -18,6 +18,7 @@ import {Component, OnInit} from '@angular/core';
 import {PipelineRegistryService} from '../shared/pipeline-registry.service';
 import {PipelineModel} from '../shared/pipeline.model';
 import {ActivatedRoute} from '@angular/router';
+import {DomSanitizer} from '@angular/platform-browser';
 
 @Component({
     selector: 'senergy-pipeline-details',
@@ -30,7 +31,7 @@ export class PipelineDetailsComponent implements OnInit {
     ready = false;
     pipe = {} as PipelineModel;
 
-    constructor(private route: ActivatedRoute, private pipelineRegistryService: PipelineRegistryService) {
+    constructor(private route: ActivatedRoute, private pipelineRegistryService: PipelineRegistryService, private sanitizer: DomSanitizer) {
     }
 
     ngOnInit() {
@@ -39,6 +40,15 @@ export class PipelineDetailsComponent implements OnInit {
             this.pipelineRegistryService.getPipeline(id).subscribe((resp: PipelineModel | null) => {
                 if (resp !== null) {
                     this.pipe = resp;
+                    if (typeof this.pipe.image === 'string') {
+                        const parser = new DOMParser();
+                        const svg = parser.parseFromString(this.pipe.image, 'image/svg+xml').getElementsByTagName('svg')[0];
+                        // @ts-ignore
+                        const viewbox = svg.getAttribute('viewbox').split(' ');
+                        svg.setAttribute('height', viewbox[3]);
+                        this.pipe.image = this.sanitizer.bypassSecurityTrustHtml(
+                            new XMLSerializer().serializeToString(svg));
+                    }
                 }
                 this.ready = true;
             });

@@ -102,9 +102,10 @@ export class EnergyPredictionEditDialogComponent implements OnInit {
         this.widget.properties.selectedOption = this.selectedOption;
         this.widget.properties.thresholdOption = this.selectedThresholdOption;
         if (this.widget.properties.columns === undefined) {
-            this.widget.properties.columns = {timestamp: '', prediction: ''};
+            this.widget.properties.columns = {timestamp: '', prediction: '', predictionTotal: ''};
         }
         this.widget.properties.columns.prediction = this.selectedOption + 'Prediction';
+        this.widget.properties.columns.predictionTotal = this.selectedOption + 'PredictionTotal';
         this.widget.properties.columns.timestamp = this.selectedOption + 'Timestamp';
 
         if (this.formControl.value) {
@@ -119,8 +120,6 @@ export class EnergyPredictionEditDialogComponent implements OnInit {
                 this.dialogRef.close(this.widget);
             }
         });
-
-        console.log(this.widget); // TODO
     }
 
     private _filter(value: string): ChartsExportMeasurementModel[] {

@@ -25,6 +25,12 @@ import {DurationDialogComponent} from '../dialogs/duration-dialog/duration-dialo
 import {BpmnElement, BpmnParameter, DurationResult, HistoricDataConfig} from './designer.model';
 import {HistoricDataConfigDialogComponent} from '../dialogs/historic-data-config-dialog/historic-data-config-dialog.component';
 import {EmailConfigDialogComponent} from '../dialogs/email-config-dialog/email-config-dialog.component';
+import {
+    DeviceTypeSelectionRefModel,
+    DeviceTypeSelectionResultModel
+} from '../../../devices/device-types-overview/shared/device-type-selection.model';
+import {TaskConfigDialogComponent} from '../dialogs/task-config-dialog/task-config-dialog.component';
+import {NotificationConfigDialogComponent} from '../dialogs/notification-config-dialog/notification-config-dialog.component';
 
 @Injectable({
     providedIn: 'root'
@@ -103,6 +109,31 @@ export class DesignerDialogService {
         editDialogRef.afterClosed().subscribe((value: {to: string, subj: string, content: string}) => {
             if (value) {
                 callback(value.to, value.subj, value.content);
+            }
+        });
+    }
+
+    openNotificationConfigDialog(subj: string, content: string, callback: (subj: string, content: string) => void) {
+        const dialogConfig = new MatDialogConfig();
+        dialogConfig.disableClose = false;
+        dialogConfig.autoFocus = false;
+        dialogConfig.data = {subj: subj, content: content};
+        const editDialogRef = this.dialog.open(NotificationConfigDialogComponent, dialogConfig);
+        editDialogRef.afterClosed().subscribe((value: {subj: string, content: string}) => {
+            if (value) {
+                callback(value.subj, value.content);
+            }
+        });
+    }
+
+    openTaskConfigDialog(defaultSelection: DeviceTypeSelectionRefModel, callback: (connectorInfo: DeviceTypeSelectionResultModel) => void) {
+        const dialogConfig = new MatDialogConfig();
+        dialogConfig.disableClose = false;
+        dialogConfig.data = {selection: JSON.parse(JSON.stringify(defaultSelection || null))};         // create copy of object
+        const editDialogRef = this.dialog.open(TaskConfigDialogComponent, dialogConfig);
+        editDialogRef.afterClosed().subscribe((result: DeviceTypeSelectionResultModel) => {
+            if (result) {
+                callback(result);
             }
         });
     }

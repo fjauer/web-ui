@@ -75,7 +75,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         clearInterval(this.interval);
         const refreshTimeInMs = this.dashboards[this.activeTabIndex].refresh_time * 1000;
         if (refreshTimeInMs > 0) {
-            this.interval = setInterval(() => this.dashboardService.reloadAllWidgets(), refreshTimeInMs);
+            this.interval = window.setInterval(() => this.dashboardService.reloadAllWidgets(), refreshTimeInMs);
         }
     }
 

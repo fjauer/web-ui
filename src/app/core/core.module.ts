@@ -17,13 +17,18 @@
 import {NgModule, Optional, SkipSelf} from '@angular/core';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {
-    MatSidenavModule,
-    MatIconModule,
     MatButtonModule,
-    MatToolbarModule,
-    MatMenuModule,
+    MatDialogModule,
     MatDividerModule,
-    MatFormFieldModule, MatInputModule, MatProgressSpinnerModule, MatTooltipModule, MatListModule, MatDialogModule
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    MatListModule,
+    MatMenuModule,
+    MatProgressSpinnerModule,
+    MatSidenavModule,
+    MatToolbarModule,
+    MatTooltipModule
 } from '@angular/material';
 
 import {throwIfAlreadyLoaded} from './module-import-guard';
@@ -42,8 +47,10 @@ import {DeleteDialogComponent} from './dialogs/delete-dialog.component';
 import {ShortInputVariableNamePipe} from './pipe/short-input-variable-name.pipe';
 import {ShortOutputVariableNamePipe} from './pipe/short-output-variable-name.pipe';
 import {ShortInputVariableValuePipe} from './pipe/short-input-variable-value.pipe';
-import {PreviewFormatPipe} from './pipe/preview-format.pipe';
 import {WidgetNoDataComponent} from './components/widget-no-data/widget-no-data.component';
+import {MatBadgeModule} from '@angular/material/badge';
+import {NotificationDialogComponent} from './components/toolbar/notification/dialog/notification-dialog.component';
+import {MatExpansionModule} from '@angular/material/expansion';
 
 
 @NgModule({
@@ -65,6 +72,8 @@ import {WidgetNoDataComponent} from './components/widget-no-data/widget-no-data.
         MatListModule,
         MatDialogModule,
         ReactiveFormsModule,
+        MatBadgeModule,
+        MatExpansionModule,
     ],
     declarations: [
         SidenavComponent,
@@ -79,9 +88,9 @@ import {WidgetNoDataComponent} from './components/widget-no-data/widget-no-data.
         ShortInputVariableNamePipe,
         ShortInputVariableValuePipe,
         DeleteDialogComponent,
-        PreviewFormatPipe,
         DeleteDialogComponent,
         WidgetNoDataComponent,
+        NotificationDialogComponent,
     ],
     exports: [
         SidenavComponent,
@@ -95,11 +104,11 @@ import {WidgetNoDataComponent} from './components/widget-no-data/widget-no-data.
         ShortOutputVariableNamePipe,
         ShortInputVariableNamePipe,
         ShortInputVariableValuePipe,
-        PreviewFormatPipe,
         WidgetNoDataComponent,
     ],
     entryComponents: [
         DeleteDialogComponent,
+        NotificationDialogComponent,
     ]
 })
 

@@ -1,12 +1,12 @@
 /*
  * Copyright 2018 InfAI (CC SES)
- *  
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,8 +22,10 @@ import {
     MatCardModule,
     MatCheckboxModule,
     MatDialogModule,
-    MatDividerModule, MatExpansionModule,
-    MatFormFieldModule, MatGridListModule,
+    MatDividerModule,
+    MatExpansionModule,
+    MatFormFieldModule,
+    MatGridListModule,
     MatIconModule,
     MatInputModule,
     MatListModule,
@@ -31,7 +33,8 @@ import {
     MatOptionModule,
     MatProgressSpinnerModule,
     MatSelectModule,
-    MatSlideToggleModule, MatStepperModule,
+    MatSlideToggleModule,
+    MatStepperModule,
     MatTableModule,
     MatTooltipModule
 } from '@angular/material';
@@ -78,8 +81,11 @@ import {EnergyPredictionComponent} from './energy-prediction/energy-prediction.c
 import {EnergyPredictionEditDialogComponent} from './energy-prediction/dialog/energy-prediction-edit-dialog.component';
 import {AirQualityComponent} from './air-quality/air-quality.component';
 import {AirQualityEditDialogComponent} from './air-quality/dialog/air-quality-edit-dialog.component';
-import {AgmCoreModule} from '@agm/core';
-import {MatGoogleMapsAutocompleteModule} from '@angular-material-extensions/google-maps-autocomplete';
+import {AngularFittextModule} from 'angular-fittext';
+import {MultiValueComponent} from './multi-value/multi-value.component';
+import {MultiValueEditDialogComponent} from './multi-value/dialog/multi-value-edit-dialog.component';
+import {ProcessIncidentListComponent} from './process-incident-list/process-incident-list.component';
+import {ProcessIncidentListEditDialogComponent} from './process-incident-list/dialogs/process-incident-list-edit-dialog.component';
 
 registerLocaleData(localeDe, 'de'); // todo: language;
 
@@ -112,13 +118,8 @@ registerLocaleData(localeDe, 'de'); // todo: language;
         RouterModule,
         MatStepperModule,
         MatGridListModule,
-
-        AgmCoreModule.forRoot({
-            apiKey: 'placeholder', // TODO make env, currently just testing
-            libraries: ['places']
-        }),
-        MatGoogleMapsAutocompleteModule.forRoot(),
-        MatExpansionModule
+        MatExpansionModule,
+        AngularFittextModule
     ],
     declarations: [
         SwitchComponent,
@@ -153,10 +154,14 @@ registerLocaleData(localeDe, 'de'); // todo: language;
         DeviceDowntimeListEditDialogComponent,
         SingleValueComponent,
         SingleValueEditDialogComponent,
+        MultiValueComponent,
+        MultiValueEditDialogComponent,
         EnergyPredictionComponent,
         EnergyPredictionEditDialogComponent,
         AirQualityComponent,
-        AirQualityEditDialogComponent
+        AirQualityEditDialogComponent,
+        ProcessIncidentListComponent,
+        ProcessIncidentListEditDialogComponent,
     ],
     exports: [
         SwitchComponent,
@@ -185,8 +190,10 @@ registerLocaleData(localeDe, 'de'); // todo: language;
         ProcessModelListEditDialogComponent,
         DeviceDowntimeListEditDialogComponent,
         SingleValueEditDialogComponent,
+        MultiValueEditDialogComponent,
         EnergyPredictionEditDialogComponent,
-        AirQualityEditDialogComponent
+        AirQualityEditDialogComponent,
+        ProcessIncidentListEditDialogComponent
     ],
     providers: [{provide: LOCALE_ID, useValue: 'de'}] // todo: language;
 

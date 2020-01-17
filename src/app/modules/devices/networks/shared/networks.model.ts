@@ -18,6 +18,13 @@ export interface NetworksModel {
     id: string;
     name: string;
     log_state: boolean;
-    devices: string[] | null;
+    device_local_ids: string[] | null;
+}
+
+export interface HubModel {
+    id: string;
+    name: string;
+    hash: string;
+    device_local_ids: string[] | null;
 }
 

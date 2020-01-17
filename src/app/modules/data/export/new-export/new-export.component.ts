@@ -17,8 +17,12 @@
 import {Component, OnInit} from '@angular/core';
 import {DeviceInstancesService} from '../../../devices/device-instances/shared/device-instances.service';
 import {DeviceInstancesModel} from '../../../devices/device-instances/shared/device-instances.model';
-import {DeviceTypeService} from '../../../devices/device-types/shared/device-type.service';
-import {DeviceTypeAssignmentModel, DeviceTypeModel, DeviceTypeServiceModel} from '../../../devices/device-types/shared/device-type.model';
+import {DeviceTypeService} from '../../../devices/device-types-overview/shared/device-type.service';
+import {
+    DeviceTypeContentModel, DeviceTypeContentVariableModel,
+    DeviceTypeModel,
+    DeviceTypeServiceModel
+} from '../../../devices/device-types-overview/shared/device-type.model';
 import {ExportModel, ExportValueModel} from '../shared/export.model';
 import {ExportService} from '../shared/export.service';
 import {MatSnackBar} from '@angular/material';
@@ -26,7 +30,6 @@ import {PipelineModel, PipelineOperatorModel} from '../../pipeline-registry/shar
 import {PipelineRegistryService} from '../../pipeline-registry/shared/pipeline-registry.service';
 import {Router} from '@angular/router';
 import {IOModel, OperatorModel} from '../../operator-repo/shared/operator.model';
-import {ValueTypesFieldTypeModel} from '../../../devices/value-types/shared/value-types.model';
 import {OperatorRepoService} from '../../operator-repo/shared/operator-repo.service';
 
 
@@ -56,8 +59,15 @@ export class NewExportComponent implements OnInit {
     dropdown = [
         'float',
         'string',
-        'int'
+        'int',
+        'bool'
     ];
+
+    typeString = 'https://schema.org/Text';
+    typeInteger = 'https://schema.org/Integer';
+    typeFloat = 'https://schema.org/Float';
+    typeBoolean = 'https://schema.org/Boolean';
+
 
 
     constructor(private pipelineRegistryService: PipelineRegistryService,
@@ -82,7 +92,7 @@ export class NewExportComponent implements OnInit {
             this.export.Filter = this.device.id;
             this.export.FilterType = 'deviceId';
             this.export.ServiceName = this.service.name;
-            this.export.Topic = this.service.id.replace(/#/g, '_');
+            this.export.Topic = this.service.id.replace(/#/g, '_').replace(/:/g, '_');
         } else if (this.selector === 'pipe') {
             this.export.EntityName = this.pipeline.id;
             this.export.Filter = this.pipeline.id;
@@ -115,7 +125,7 @@ export class NewExportComponent implements OnInit {
 
     deviceChanged(device: DeviceInstancesModel) {
         if (this.device !== device) {
-            this.deviceTypeService.getDeviceType(device.devicetype).subscribe((resp: DeviceTypeModel | null) => {
+            this.deviceTypeService.getDeviceType(device.device_type.id).subscribe((resp: DeviceTypeModel | null) => {
                 if (resp !== null) {
                     this.deviceType = resp;
                 }
@@ -125,25 +135,23 @@ export class NewExportComponent implements OnInit {
     }
 
     serviceChanged(service: DeviceTypeServiceModel) {
-        let pathString = 'value';
-        service.output.forEach((out: DeviceTypeAssignmentModel) => {
-            if (out.type.fields != null) {
-                pathString += '.' + out.name;
-                out.type.fields.forEach((field: ValueTypesFieldTypeModel) => {
-                    this.traverseDataStructure(pathString, field);
-                });
-            }
+        this.resetVars();
+        const pathString = 'value';
+        service.outputs.forEach((out: DeviceTypeContentModel) => {
+            this.traverseDataStructure(pathString, out.content_variable);
         });
     }
 
-    traverseDataStructure(pathString: string, field: ValueTypesFieldTypeModel) {
-        if (field.type.base_type.split('#')[1] === 'structure' && field.type.fields !== undefined && field.type.fields !== null) {
+    traverseDataStructure(pathString: string, field: DeviceTypeContentVariableModel) {
+        if (field.type === 'https://schema.org/StructuredValue' && field.type !== undefined && field.type !== null) {
             pathString += '.' + field.name;
-            field.type.fields.forEach((innerField: ValueTypesFieldTypeModel) => {
-                this.traverseDataStructure(pathString, innerField);
-            });
+            if (field.sub_content_variables !== undefined) {
+                field.sub_content_variables.forEach((innerField: DeviceTypeContentVariableModel) => {
+                    this.traverseDataStructure(pathString, innerField);
+                });
+            }
         } else {
-            this.paths.set(pathString + '.' + field.name, field.type.base_type.split('#')[1]);
+            this.paths.set(pathString + '.' + field.name, field.type);
         }
     }
 
@@ -181,8 +189,20 @@ export class NewExportComponent implements OnInit {
     pathChanged(id: number) {
         if (id !== undefined) {
             let type = this.paths.get(this.export.Values[id].Path);
-            if (this.paths.get(this.export.Values[id].Path) === 'decimal') {
-                type =  'float';
+            switch (this.paths.get(this.export.Values[id].Path)) {
+                case this.typeString:
+                    type = 'string';
+                    break;
+                case this.typeFloat:
+                    type = 'float';
+                    break;
+                case this.typeInteger:
+                    type = 'int';
+                    break;
+                case this.typeBoolean:
+                    type = 'bool';
+                    break;
+
             }
             // @ts-ignore
             this.export.Values[id].Type = type;

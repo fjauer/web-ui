@@ -37,6 +37,7 @@ export const environment = {
   processRepoUrl: '${process.env.PROCESS_REPO_URL}',
   processDeploymentUrl: '${process.env.PROCESS_DEPLOYMENT_URL}',
   processServiceUrl: '${process.env.PROCESS_SERVICE_URL}',
+  processIncidentApiUrl: '${process.env.PROCESS_INCIDENT_API_URL}',
   operatorRepoUrl: '${process.env.OPERATOR_REPO_URL}',
   exportService: '${process.env.EXPORT_SERVICE}',
   influxAPIURL: '${process.env.INFLUX_API_URL}',
@@ -50,7 +51,14 @@ export const environment = {
   iotRepoUrl: '${process.env.IOT_REPO_URL}',
   dashboardServiceUrl: '${process.env.DASHBOARD_SERVICE_URL}',
   usersServiceUrl: '${process.env.USERS_SERVICE_URL}',
-  valuetypeSearchUrl: '${process.env.VALUETYPE_SEARCH_URL}',
+  deviceRepoUrl: '${process.env.DEVICE_REPO_URL}',
+  deviceManagerUrl: '${process.env.DEVICE_MANAGER_URL}',
+  semanticRepoUrl: '${process.env.SEMANTIC_REPO_URL}',
+  ubaUrl: '${process.env.UBA_URL}',
+  dwdOpenUrl: '${process.env.DWD_OPEN_URL}',
+  geonamesUrl: '${process.env.GEONAMES_URL}',
+  yrUrl: '${process.env.YR_URL}',
+  notificationsUrl: '${process.env.NOTIFICATION_SERVICE_URL}',
 };
 `;
 
