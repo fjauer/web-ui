@@ -38,7 +38,7 @@ import {
 } from './charts-export-request-payload.model';
 import {ChartsExportRangeTimeTypeEnum} from './charts-export-range-time-type.enum';
 
-const customColor = '#4484ce'; // /* cc */
+const customColor = '#c1022c'; // /* cc */
 
 @Injectable({
     providedIn: 'root'
