@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 InfAI (CC SES)
+ * Copyright 2020 InfAI (CC SES)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 
 import {Injectable} from '@angular/core';
-import {MatDialog, MatDialogConfig} from '@angular/material';
 
 import {SwitchEditDialogComponent} from '../dialogs/switch-edit-dialog.component';
 import {environment} from '../../../../environments/environment';
@@ -27,6 +26,7 @@ import {ErrorHandlerService} from '../../../core/services/error-handler.service'
 import {SwitchPropertiesDeploymentsModel, SwitchPropertiesInstancesModel} from './switch-properties.model';
 import {WidgetModel} from '../../../modules/dashboard/shared/dashboard-widget.model';
 import {DashboardManipulationEnum} from '../../../modules/dashboard/shared/dashboard-manipulation.enum';
+import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 
 @Injectable({
     providedIn: 'root'
@@ -58,12 +58,14 @@ export class SwitchService {
         });
     }
 
+
+
     startMultipleDeployments(deployments: SwitchPropertiesDeploymentsModel[]): Observable<SwitchPropertiesInstancesModel[]> {
 
         const array: Observable<SwitchPropertiesInstancesModel>[] = [];
         deployments.forEach((deploy: SwitchPropertiesDeploymentsModel) => {
             array.push(this.http.get<SwitchPropertiesInstancesModel>(environment.processServiceUrl +
-                '/process-definition/' + encodeURIComponent(deploy.id) + '/start/id'));
+                '/deployment/' + encodeURIComponent(deploy.id) + '/start'));
         });
 
         return forkJoin(array);

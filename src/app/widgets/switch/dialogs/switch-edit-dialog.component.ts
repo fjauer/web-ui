@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 InfAI (CC SES)
+ * Copyright 2020 InfAI (CC SES)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 
 import {Component, Inject, OnInit, ViewChild} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef, MatTable} from '@angular/material';
 import {FormControl} from '@angular/forms';
 import {Observable} from 'rxjs';
 import {map, startWith} from 'rxjs/internal/operators';
@@ -26,9 +25,10 @@ import {WidgetModel} from '../../../modules/dashboard/shared/dashboard-widget.mo
 import {DashboardResponseMessageModel} from '../../../modules/dashboard/shared/dashboard-response-message.model';
 import {DeploymentsDefinitionModel} from '../../../modules/processes/deployments/shared/deployments-definition.model';
 import {SwitchPropertiesDeploymentsModel} from '../shared/switch-properties.model';
+import {MatTable} from '@angular/material/table';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 
 export interface TableElement {
-    deploymentId: string;
     name: string;
     id: string;
     trigger: string;
@@ -51,7 +51,7 @@ export class SwitchEditDialogComponent implements OnInit {
     data: TableElement[] = [];
     dashboardId: string;
     widgetId: string;
-    widget: WidgetModel = {id: '', name: '', type: '', properties: {}};
+    widget: WidgetModel = {} as WidgetModel;
     newTrigger = 'on';
 
     constructor(private dialogRef: MatDialogRef<SwitchEditDialogComponent>,
@@ -73,7 +73,7 @@ export class SwitchEditDialogComponent implements OnInit {
 
             if (widget.properties.deployments) {
                 widget.properties.deployments.forEach((deploy: SwitchPropertiesDeploymentsModel) => {
-                    this.data.push({deploymentId: deploy.deploymentId, name: deploy.name, id: deploy.id, trigger: deploy.trigger});
+                    this.data.push({name: deploy.name, id: deploy.id, trigger: deploy.trigger});
                 });
             }
             this.table.renderRows();
@@ -117,16 +117,13 @@ export class SwitchEditDialogComponent implements OnInit {
 
     addColumn() {
         if (this.deployments.indexOf(this.formControl.value) >= 0) {
-            this.deploymentsService.getDefinition(this.formControl.value.id).subscribe((deploymentDefinition: DeploymentsDefinitionModel[]) => {
-                this.data.push({
-                    deploymentId: deploymentDefinition[0].deploymentId,
-                    name: deploymentDefinition[0].name,
-                    id: deploymentDefinition[0].id,
-                    trigger: this.newTrigger,
-                });
-                this.table.renderRows();
-                this.formControl.reset('');
+            this.data.push({
+                name: this.formControl.value.name,
+                id: this.formControl.value.id,
+                trigger: this.newTrigger,
             });
+            this.table.renderRows();
+            this.formControl.reset('');
         } else {
             this.formControl.setErrors({'valid': false});
         }
@@ -137,7 +134,7 @@ export class SwitchEditDialogComponent implements OnInit {
         this.table.renderRows();
     }
 
-    displayFn(input?: DeploymentsModel): string | undefined {
-        return input ? input.name : undefined;
+    displayFn(input?: DeploymentsModel): string {
+        return input ? input.name : '';
     }
 }
